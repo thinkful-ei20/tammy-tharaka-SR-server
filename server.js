@@ -16,6 +16,12 @@ const { PORT, DATABASE_URL } = require('./config');
 
 const app = express();
 
+app.use(
+  cors({
+    origin: CLIENT_ORIGIN
+  })
+);
+
 app.use(morgan('common'));
 
 // CORS
