@@ -35,6 +35,8 @@ app.use(function (req, res, next) {
   next();
 });
 
+//^add client origin env
+
 passport.use(localStrategy);
 passport.use(jwtStrategy);
 
