@@ -1,5 +1,4 @@
 'use strict';
-const bcrypt = require('bcryptjs');
 const mongoose = require('mongoose');
 
 mongoose.Promise = global.Promise;
@@ -23,40 +22,27 @@ mongoose.Promise = global.Promise;
 // });
 
 
-module.exports = mongoose.model('Tag', tagSchema);
+// module.exports = mongoose.model('Tag', tagSchema);
 
 const QuestionSchema = mongoose.Schema({
-// //   img: { 
-// //     data: Buffer, 
-// //     contentType: String
-// //   },
-
-    img: { 
-        type: String,
-        required: true
-    },
-    correctAnswer: {
-        type: String,
-        required: true
-    },
-    userId: { 
-        type: mongoose.Schema.Types.ObjectId, 
-        ref: 'User'
-    },
-    next: {
-        type: String,
-        required: true
-    }
+  img: { 
+    type: String,
+    required: true
+  },
+  correctAnswer: {
+    type: String,
+    required: true
+  }
 });
 
 QuestionSchema.methods.serialize = function() {
-    return {
-        img: this.img || null,
-        correctAnswer: this.correctAnswer || '',
-        userId: this.userId || '',
-        _id: this._id || '',
-        next: this.next || null
-    };
+  return {
+    img: this.img || null,
+    correctAnswer: this.correctAnswer || '',
+    userId: this.userId || '',
+    _id: this._id || '',
+    next: this.next || null
+  };
 };
 
 const Question = mongoose.model('Question', QuestionSchema);

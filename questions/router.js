@@ -1,138 +1,109 @@
 'use strict';
 const express = require('express');
 const bodyParser = require('body-parser');
-const mongoose = require('mongoose');
-const passport = require('passport');
 
 const {Question} = require('./models');
 
 const router = express.Router();
-
 const jsonParser = bodyParser.json();
-const jwtAuth = passport.authenticate('jwt', {session: false});
 
-//Get questions
-// router.get('/', jwtAuth, (req, res,) => {
-//   return Question.find()
-//     .then(questions => res.json(questions.map(ques => ques.serialize())))
-//     .catch(err => res.status(500).json({message: 'Internal server error'}));
-// });
+const passport = require('passport');
+router.use('/', passport.authenticate('jwt', { session: false, failWithError: true }));
 
 
+//sample user: 
+// "username": "casey",
+// "firstName": "",
+// "lastName": "",
+// "_id": "5b43c9d5445330563ce81cdf"
 
-//1. router.get => request Take in userID, need to get first index of the array @ userID,  response = returns img url string, question string
+//"password": "casey12345"
 
-// 2. router.put => request takes in userID, compares the input with the first index of array
+//1. Seed a database
+//Post questions:
+//Create new question cards
+router.post('/', jsonParser, (req, res, next) => {
+  const userId = req.user._id;
+  const {img, correctAnswer} = req.body;
+
+  const newCard = {img, correctAnswer, userId};
+
+  if (!img) {
+    const err = new Error('Missing `img` in request body');
+    err.status = 400;
+    return next(err);
+  }
+
+  if (!correctAnswer) {
+    const err = new Error('Missing `correctAnswer` in request body');
+    err.status = 400;
+    return next(err);
+  }
+
+  Question.create(newCard)
+    .then(result =>{
+      res.location(`${req.originalUrl}/${result.id}`)
+        .status(201)
+        .json(result);
+    })
+    .catch(err => res.status(500).json({message: 'Internal Server Error'}));
+});
+
+
+//2. router.get => request Take in userID, need to get first index of the array @ userID,  response = returns img url string, question string
+
+router.get('/', jsonParser, (req, res, next) => {
+  const userId = (req.user.id);
+  Question.find({userId})
+    .then(results => {
+      //give only the top card
+      res.json(results[0]);
+    })
+    .catch(err =>{
+      next(err);
+    });
+});
+
+//3. router.put => request takes in userID, compares the input with the first index of array
 //      if the answer is correct (req === answer[0]) if:
 //          a. the card should be removed
 //          b. the card should be put near the end of the list
 //      if the answer is wrong
 //          a. remove (spilice?) then insert it 2 spaces away from the top
+//      response returns
+//        img url string
+//        answer string
 
-router.get('/user', jwtAuth, (req, res, next) => {
+router.put('/', jsonParser, (req,res,next) =>{
+  const userId = (req.user.id);
+  const {correctAnswer} = req.body;
+  let answer;
+  let currentCard;
+  //User.findOne
+  //Pick out question at head
+  Question.find({userId})
+    .then(results => {
+      //give only the top card
+      answer = results[0].correctAnswer;
+      currentCard = results[0]._id;
+    });
+  if (correctAnswer === answer){
+    //set head
+    //head default at 0, if correct head is at 1
+  }
 
-  return Question.find( { $or: [ {"userId": req.user._id} ] } )
   
-    .then(questions => res.json(questions.map(ques => ques.serialize())))
-    .catch(err => res.status(500).json({message: 'Internal server error'}));
-}) 
+});
 
-// router.patch('/:id', jsonParser, jwtAuth, (req, res, next) => {
-//   const acceptUserId = req.user._id;
-//   const { id } = req.params;
 
-//   const updateEvent = {
-//     title: req.body.title,
-//     hours: req.body.hours,
-//     pay: req.body.pay,
-//     userId: req.body.userId,
-//     acceptUserId: acceptUserId
-//   };
 
-//     Event.findByIdAndUpdate(id, updateEvent, {
-//       new: true
-//     })
-//     .then(event => {
-//       if (event) {
-//         res.json(event);
-//       } else {
-//         next();
-//       }
-//     })
+// router.get('/user', jwtAuth, (req, res, next) => {
 
-//   .catch(err => res.status(500).json({message: 'Internal server error'}));
-// }) 
-
-// router.delete('/:id', jsonParser, jwtAuth, (req, res, next) => {
-
-//   const { id } = req.params;
-
-//     Event.findByIdAndRemove(id)
-//     .then(result => {
-//       if (result) {
-//         res.status(204).end();
-//       } else {
-//         next();
-//       }
-//     })
-
-//   .catch(err => res.status(500).json({message: 'Internal server error'}));
+//   return Question.find( { $or: [ {"userId": req.user._id} ] } )
+  
+//     .then(questions => res.json(questions.map(ques => ques.serialize())))
+//     .catch(err => res.status(500).json({message: 'Internal server error'}));
 // }) 
 
 
-// Post a new Event
-// router.post('/', jsonParser, jwtAuth, (req, res) => {
-//     const userId = req.user._id;
-//     const requiredFields = ['title', 'hours', 'pay'];
-//     const missingField = requiredFields.find(field => !(field in req.body));
-  
-//     if (missingField) {
-//       return res.status(422).json({
-//         code: 422,
-//         reason: 'ValidationError',
-//         message: 'Missing field',
-//         location: missingField
-//       });
-//     }
-  
-//     const stringFields = ['title', 'hours', 'pay'];
-//     const nonStringField = stringFields.find(
-//       field => field in req.body && typeof req.body[field] !== 'string'
-//     );
-  
-//     if (nonStringField) {
-//       return res.status(422).json({
-//         code: 422,
-//         reason: 'ValidationError',
-//         message: 'Incorrect field type: expected string',
-//         location: nonStringField
-//       });
-//     }
- 
-
-//     const event = new Event({
-//         _id: new mongoose.Types.ObjectId(),
-//         title: req.body.title,
-//         hours: req.body.hours,
-//         pay: req.body.pay,
-//         userId: userId,
-//         acceptUserId: null
-//       });
-
-
-
-//     event.save().then(result => {
-//         console.log(result);
-//         res.status(201).json({
-//          message: 'Handling POST requests to /events',
-//          createEvent: result
-//        });
-//     })
-
-  
-//       .catch(err => {
-//         res.status(500).json({code: 500, message: 'Internal server error'});
-//       });
-//   });
-
-  module.exports = {router};
+module.exports = {router};

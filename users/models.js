@@ -16,6 +16,14 @@ const UserSchema = mongoose.Schema({
   },
   firstName: {type: String, default: ''},
   lastName: {type: String, default: ''},
+  head:{type: Number, default: 0},
+  questions:[{
+    question: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Question'},
+    Answer:{type: String, default: ''},
+    next:{type: Number, default: 0},
+  }]
 });
 
 UserSchema.methods.serialize = function() {
