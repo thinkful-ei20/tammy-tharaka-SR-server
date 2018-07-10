@@ -47,6 +47,7 @@ const QuestionSchema = mongoose.Schema({
         type: String,
         required: true
     }
+    
 });
 
 QuestionSchema.methods.serialize = function() {
