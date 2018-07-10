@@ -3,6 +3,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 
 const {Question} = require('./models');
+const {User} = require('../users/models');
 
 const router = express.Router();
 const jsonParser = bodyParser.json();
@@ -22,6 +23,7 @@ router.use('/', passport.authenticate('jwt', { session: false, failWithError: tr
 //1. Seed a database
 //Post questions:
 //Create new question cards
+
 router.post('/', jsonParser, (req, res, next) => {
   const userId = req.user._id;
   const {img, correctAnswer} = req.body;
@@ -54,10 +56,10 @@ router.post('/', jsonParser, (req, res, next) => {
 
 router.get('/', jsonParser, (req, res, next) => {
   const userId = (req.user.id);
-  Question.find({userId})
+  User.findOne({userId})
     .then(results => {
       //give only the top card
-      res.json(results[0]);
+      res.json(results.Question[results.head]);
     })
     .catch(err =>{
       next(err);
@@ -92,7 +94,7 @@ router.put('/', jsonParser, (req,res,next) =>{
     //head default at 0, if correct head is at 1
   }
 
-  
+
 });
 
 
