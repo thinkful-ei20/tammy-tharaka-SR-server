@@ -59,6 +59,7 @@ router.get('/', jsonParser, (req, res, next) => {
   User.findOne({userId})
     .then(results => {
       //give only the top card
+      console.log(results);
       res.json(results.Question[results.head]);
     })
     .catch(err =>{

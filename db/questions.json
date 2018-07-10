@@ -1,0 +1,32 @@
+[
+  {"img": "https://www.bucknell.edu/Images/depts/Communication/BMagazine/Spring2013/WongChinFoo.jpg",
+    "correctAnswer": "Wong Chin Foo"
+  },
+  {"img": "https://s-i.huffpost.com/gen/785682/images/o-ANNA-MAY-WONG-facebook.jpg",
+    "correctAnswer": "Anna May Wong"
+  },
+  {"img": "http://gvshp.org/blog/wp-content/uploads/2017/09/web-dubois-cropped-hires.jpg",
+    "correctAnswer": "Du Bois"
+  },
+  {"img": "http://freemasonry.bcy.ca/biography/images/sun_y.jpg",
+    "correctAnswer": "Sun Yat Sen"
+  },
+  {"img": "https://asiafoundation.org/wp-content/uploads/2017/10/AmartyaSenQA-400x460.jpg",
+    "correctAnswer": "Amartya Sen"
+  },
+  {"img": "https://hips.hearstapps.com/ell.h-cdn.co/assets/17/08/1600x800/landscape-1487686267-elle-maya-angelou.jpg",
+    "correctAnswer": "Maya Angelou"
+  },
+  {"img": "https://www.ncronline.org/sites/default/files/styles/article_slideshow/public/stories/images/20170111T0934-7193-CNS-OBAMA-FINAL-ADDRESS%20crop_0.jpg",
+    "correctAnswer": "Barack Obama"
+  },
+  {"img": "https://amp.businessinsider.com/images/5b338f061ae66235008b4939-750-375.jpg",
+    "correctAnswer": "Alexandria Ocasio-Cortez"
+  },
+  {"img": "http://images.csmonitor.com/csm/2012/03/X00098_9.JPG.jpg?alias=standard_900x600",
+    "correctAnswer": "Cesar Chavez"
+  },
+  {"img": "http://www.rafu.com/wp-content/uploads/2014/05/ichioka-gee.jpg",
+    "correctAnswer": "Yuji Ichioka"
+  }
+]

@@ -48,6 +48,7 @@ QuestionSchema.methods.serialize = function() {
   };
 };
 
-const Question = mongoose.model('Question', QuestionSchema);
+//const Question 
+module.exports = mongoose.model('Question', QuestionSchema);
 
-module.exports = {Question};
+//module.exports = {Question};
