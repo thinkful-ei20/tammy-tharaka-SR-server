@@ -18,11 +18,10 @@ const UserSchema = mongoose.Schema({
   lastName: {type: String, default: ''},
   head:{type: Number, default: 0},
   questions:[{
-    question: {
-      type: mongoose.Schema.Types.ObjectId,
+    question: {type: mongoose.Schema.Types.Object,
       ref: 'Question'},
-    Answer:{type: String, default: ''},
-    next:{type: Number, default: 0},
+    m: { type: Number, required: true, default : 1},
+    next:{type: Number},
   }]
 });
 

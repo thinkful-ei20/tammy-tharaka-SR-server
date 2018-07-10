@@ -2,8 +2,8 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 
-const {Question} = require('./models');
-const {User} = require('../users/models');
+const Question = require('./models');
+const User = require('../users/models');
 
 const router = express.Router();
 const jsonParser = bodyParser.json();
@@ -55,16 +55,27 @@ router.post('/', jsonParser, (req, res, next) => {
 //2. router.get => request Take in userID, need to get first index of the array @ userID,  response = returns img url string, question string
 
 router.get('/', jsonParser, (req, res, next) => {
-  const userId = (req.user.id);
-  User.findOne({userId})
+  const userId = (req.user._id);
+  console.log(userId);
+  let head;
+  User.findOne({_id: userId})
     .then(results => {
       //give only the top card
-      console.log(results);
-      res.json(results.Question[results.head]);
+      console.log(results.head);
+      head = results.head;
     })
-    .catch(err =>{
-      next(err);
+    .then(() => {
+      Question.find()
+        .then(results => {
+          console.log(results);
+          res.json(results[head]);
+        })
+        .then()
+        .catch(err =>{
+          next(err);
+        });
     });
+
 });
 
 //3. router.put => request takes in userID, compares the input with the first index of array
