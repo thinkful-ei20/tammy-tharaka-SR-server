@@ -18,6 +18,17 @@ const jwtAuth = passport.authenticate('jwt', {session: false});
 //     .catch(err => res.status(500).json({message: 'Internal server error'}));
 // });
 
+
+
+//1. router.get => request Take in userID, need to get first index of the array @ userID,  response = returns img url string, question string
+
+// 2. router.put => request takes in userID, compares the input with the first index of array
+//      if the answer is correct (req === answer[0]) if:
+//          a. the card should be removed
+//          b. the card should be put near the end of the list
+//      if the answer is wrong
+//          a. remove (spilice?) then insert it 2 spaces away from the top
+
 router.get('/user', jwtAuth, (req, res, next) => {
 
   return Question.find( { $or: [ {"userId": req.user._id} ] } )
