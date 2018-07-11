@@ -50,7 +50,7 @@ router.get('/', jsonParser, (req, res, next) => {
   User.findOne({_id: userId})
     .then(results => {
       console.log(results.head);
-      res.json(results.head.question);
+      res.json(results.questions[results.head].question);
     })
     .then()
     .catch(err =>{
@@ -72,29 +72,32 @@ router.put('/', jsonParser, (req,res,next) =>{
   const userId = (req.user._id);
   let userAnswer = req.body.correctAnswer;
 
-  let head;
-  let currentNode =
   User.findOne({_id: userId})
-    .then(results => {
-      //console.log(results.head);
-      head = results.head;
-      return results.head;
+    .then(user => {
+      const currentNode = user.head._id;
+      const answeredQuestion = user.questions._id === currentNode;
     })
-    .then((answer) => {
-      if (userAnswer === answer){
-        //console.log('this is user input', userAnswer);
-        head = 
-            res.json({message:'correct'});
-      } else {
-        
-        res.json({message:'incorrect'});
-      }
-    })
-    .catch(err =>{
-      next(err);
-    });
+    
 });
 
+// .then(results => {
+//   //console.log(results.head);
+//   head = results.head;
+//   return results.head;
+// })
+// .then((answer) => {
+//   if (userAnswer === answer){
+//     //console.log('this is user input', userAnswer);
+//     head = 
+//         res.json({message:'correct'});
+//   } else {
+    
+//     res.json({message:'incorrect'});
+//   }
+// })
+// .catch(err =>{
+//   next(err);
+// });
 
 //Utilize array indexes
 //1. Set value at current node

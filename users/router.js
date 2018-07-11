@@ -135,7 +135,7 @@ router.post('/', jsonParser, (req, res) => {
       console.log('this is the first index', user_questions[0]);
       return User.findByIdAndUpdate(
         {_id: user_id}, 
-        { 'head' : user_questions[0], 'questions': user_questions},
+        {'questions': user_questions},
         { new: true });
     })
     .then(user => {
