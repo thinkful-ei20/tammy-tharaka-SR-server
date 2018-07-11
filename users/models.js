@@ -18,12 +18,18 @@ const UserSchema = mongoose.Schema({
   lastName: {type: String, default: ''},
   head:{type: Number, default: 0},
   questions:[{
-    question: {type: mongoose.Schema.Types.Object,
-      ref: 'Question'},
-    m: { type: Number, required: true, default : 1},
+    _id: {type: mongoose.Schema.Types.Object, ref: 'Question'},
+    question:{type: String},
+    answer: {type: String},
+    mValue: { type: Number, required: true, default : 1},
     next:{type: Number},
   }]
 });
+
+//Score key can be held to user is desired
+//User.questions  = 
+// [{key: A, next:1}, {key: B, next:2}, {key: C, next:3}, {key: D, next:4}, {key: E, next:5}];
+ 
 
 UserSchema.methods.serialize = function() {
   return {
