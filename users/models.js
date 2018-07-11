@@ -16,7 +16,7 @@ const UserSchema = mongoose.Schema({
   },
   firstName: {type: String, default: ''},
   lastName: {type: String, default: ''},
-  head:{type: String, default: ''},
+  head:{type: Object},
   questions:[{
     _id: {type: mongoose.Schema.Types.Object, ref: 'Question'},
     question:{type: String},

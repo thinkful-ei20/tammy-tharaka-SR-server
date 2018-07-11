@@ -42,25 +42,20 @@ router.post('/', jsonParser, (req, res, next) => {
 });
 
 
-//2. router.get => request Take in userID, need to get first index of the array @ userID,  response = returns img url string, question string
+//2. router.get => request Take in userID, displays img source at the head
 
 router.get('/', jsonParser, (req, res, next) => {
   const userId = (req.user._id);
   //console.log(userId);
-
   User.findOne({_id: userId})
     .then(results => {
-      //finds index of where first card is
-      console.log(results);
       console.log(results.head);
-      res.json(results.head);
+      res.json(results.head.question);
     })
     .then()
     .catch(err =>{
       next(err);
     });
-
-
 });
 
 //3. router.put => request takes in userID, compares the input with the first index of array
@@ -77,39 +72,30 @@ router.put('/', jsonParser, (req,res,next) =>{
   const userId = (req.user._id);
   let userAnswer = req.body.correctAnswer;
 
-  //defined outside to be comparable
   let head;
+  let currentNode =
   User.findOne({_id: userId})
     .then(results => {
-      console.log('this is user obj', results.questions);
-      //finds index of where first card is
       //console.log(results.head);
       head = results.head;
       return results.head;
     })
-    .then((head) => {
-      //finds the card at the head index
-      Question.findOne(head)
-        .then(results => {
-          console.log(results);
-          return results.correctAnswer;  
-        })
-        .then((answer) => {
-          if (userAnswer === answer){
-            //console.log('this is user input', userAnswer);
-            User.head = 
+    .then((answer) => {
+      if (userAnswer === answer){
+        //console.log('this is user input', userAnswer);
+        head = 
             res.json({message:'correct'});
-          } else {
-            //console.log('this is user input', userAnswer);
-            res.json({message:'incorrect'});
-          }
-        })
-        .catch(err =>{
-          next(err);
-        });
+      } else {
+        
+        res.json({message:'incorrect'});
+      }
+    })
+    .catch(err =>{
+      next(err);
     });
-
 });
+
+
 //Utilize array indexes
 //1. Set value at current node
 //2. find location (current node, the one just answered)
