@@ -93,6 +93,14 @@ router.get('/next', jsonParser, (req, res, next) => {
 //          i. the mValue card should be 1 space away from previous
 //          ii. Return res.json of incorrect
 
+//Utilize array indexes
+//1. Set value at current node
+//2. find location (current node, the one just answered)
+//3. update user.head === curren node.next
+//4. "insert at" by changing the next pointer
+
+//m-value = how many spaces to move node
+
 router.put('/', jsonParser, (req,res,next) =>{
   const userId = (req.user._id);
   let userAnswer = req.body.correctAnswer;
@@ -103,6 +111,7 @@ router.put('/', jsonParser, (req,res,next) =>{
       const currentIndex = user.head;
       const answeredQuestion = user.questions[currentIndex];
 
+
       //EXAMPLE:  
       //answeredQuestion =
       // [{key: A, next:1, mValue: 1, next: 1}, 
@@ -110,17 +119,24 @@ router.put('/', jsonParser, (req,res,next) =>{
       //compare if user input === whats stored in db
       if (userAnswer === answeredQuestion.correctAnswer) {
         //mValue higher if correct (further down in array)
-        answeredQuestion.mValue = answeredQuestion.mValue * 3;
+        user.questions[currentIndex].mValue  = user.questions[currentIndex].mValue * 3;
         message = 'correct';
+        console.log('updated mValue', user.questions[currentIndex].mValue);
+
         //EXAMPLE: 
         // {key: A, next:1, mValue: 3 }, 
       } else {
         //mValue shifts only one
-        answeredQuestion.mValue = 1;
+        user.questions[currentIndex].mValue  = user.questions[currentIndex].mValue;
         message = 'incorrect';
+        console.log('updated mValue', user.questions[currentIndex].mValue);
+
         //EXAMPLE: 
         // [{key: A, next:1, mValue: 2},
       }
+
+      //user.head = answeredQuestion.next;
+
       console.log('answeredQuestion', answeredQuestion);
       const newIndex = currentIndex + answeredQuestion.mValue;
       console.log('newIndex', newIndex);
@@ -144,13 +160,7 @@ router.put('/', jsonParser, (req,res,next) =>{
 
 
 
-//Utilize array indexes
-//1. Set value at current node
-//2. find location (current node, the one just answered)
-//3. update user.head === curren node.next
-//4. "insert at" by changing the next pointer
 
-//m-value = how many spaces to move node
 
 
 // [{key: A, next:1}, {key: B, next:2}, {key: C, next:3}, {key: D, next:4}, {key: E, next:5}];
