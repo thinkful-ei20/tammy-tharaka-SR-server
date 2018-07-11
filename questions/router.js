@@ -33,24 +33,25 @@ router.post('/', jsonParser, (req, res, next) => {
   }
 
   Question.create(newCard)
-    .then(result =>{
-      res.location(`${req.originalUrl}/${result.id}`)
+    .then(card =>{
+      res.location(`${req.originalUrl}/${card.id}`)
         .status(201)
-        .json(result);
+        .json(card);
     })
     .catch(err => res.status(500).json({message: 'Internal Server Error'}));
 });
 
 
-//2. router.get => request Take in userID, displays img source at the head
+//2. GET first card
+//router.get => request Take in userID, displays img source at the head
 
 router.get('/', jsonParser, (req, res, next) => {
   const userId = (req.user._id);
   //console.log(userId);
   User.findOne({_id: userId})
-    .then(results => {
-      console.log(results.head);
-      res.json(results.questions[results.head].question);
+    .then(user => {
+      console.log(user.head);
+      res.json(user.questions[user.head].question);
     })
     .then()
     .catch(err =>{
@@ -58,46 +59,90 @@ router.get('/', jsonParser, (req, res, next) => {
     });
 });
 
-//3. router.put => request takes in userID, compares the input with the first index of array
-//      if the answer is correct (req === answer[0]) if:
-//          a. the card should be removed
-//          b. the card should be put near the end of the list
-//      if the answer is wrong
-//          a. remove (spilice?) then insert it 2 spaces away from the top
-//      response returns
-//        img url string
-//        answer string
+//3. GET next card
+router.get('/next', jsonParser, (req, res, next) => {
+  const userId = (req.user._id);
+  //console.log(userId);
+  User.findOne({_id: userId})
+    .then(user => {
+      let currentIndex = user.head;
+
+      let currentNode = user.questions[currentIndex];
+      let nextIndex = currentNode.next;      
+      user.head = nextIndex;
+
+      return user.save();
+    })
+    .then(user => {
+      const head = user.head;
+      res.json(user.questions[head].question);
+    })
+    .then()
+    .catch(err =>{
+      next(err);
+    });
+});
+
+//4 Check answer & make adjustments
+//      a. ANSWER CORRECT
+//          if the answer is correct (req === answer[0])
+//          mValue (memory value)
+//          i. the card should be put near the end of the list
+//          ii. Return res.json message of correct
+//      b. ANSWER INCORRECT
+//          i. the mValue card should be 1 space away from previous
+//          ii. Return res.json of incorrect
 
 router.put('/', jsonParser, (req,res,next) =>{
   const userId = (req.user._id);
   let userAnswer = req.body.correctAnswer;
+  let message;
 
   User.findOne({_id: userId})
     .then(user => {
-      const currentNode = user.head._id;
-      const answeredQuestion = user.questions._id === currentNode;
-    })
-    
-});
+      const currentIndex = user.head;
+      const answeredQuestion = user.questions[currentIndex];
 
-// .then(results => {
-//   //console.log(results.head);
-//   head = results.head;
-//   return results.head;
-// })
-// .then((answer) => {
-//   if (userAnswer === answer){
-//     //console.log('this is user input', userAnswer);
-//     head = 
-//         res.json({message:'correct'});
-//   } else {
-    
-//     res.json({message:'incorrect'});
-//   }
-// })
-// .catch(err =>{
-//   next(err);
-// });
+      //EXAMPLE:  
+      //answeredQuestion =
+      // [{key: A, next:1, mValue: 1, next: 1}, 
+
+      //compare if user input === whats stored in db
+      if (userAnswer === answeredQuestion.correctAnswer) {
+        //mValue higher if correct (further down in array)
+        answeredQuestion.mValue = answeredQuestion.mValue * 3;
+        message = 'correct';
+        //EXAMPLE: 
+        // {key: A, next:1, mValue: 3 }, 
+      } else {
+        //mValue shifts only one
+        answeredQuestion.mValue = 1;
+        message = 'incorrect';
+        //EXAMPLE: 
+        // [{key: A, next:1, mValue: 2},
+      }
+      console.log('answeredQuestion', answeredQuestion);
+      const newIndex = currentIndex + answeredQuestion.mValue;
+      console.log('newIndex', newIndex);
+      let currentQuestion = user.questions[newIndex];
+      console.log('moving to node', currentQuestion);
+
+      answeredQuestion.next = currentQuestion.next;
+      currentQuestion.next = currentIndex;
+
+      return user.save();
+    })
+    .then(user => {
+      res.json(user.questions);
+    })
+    .then()
+    .catch(err =>{
+      next(err);
+    });
+});
+      
+
+
 
 //Utilize array indexes
 //1. Set value at current node
@@ -105,7 +150,7 @@ router.put('/', jsonParser, (req,res,next) =>{
 //3. update user.head === curren node.next
 //4. "insert at" by changing the next pointer
 
-//m-value = current node
+//m-value = how many spaces to move node
 
 
 // [{key: A, next:1}, {key: B, next:2}, {key: C, next:3}, {key: D, next:4}, {key: E, next:5}];
@@ -114,15 +159,6 @@ router.put('/', jsonParser, (req,res,next) =>{
 // look at {key: A, next:3} <= took c's pointer
 //{key: C, next:0} <= took a's index
 // [{key: A, next:1}, {key: B, next:2}, {key: C, next:0}, {key: D, next:4}, {key: E, next:5}];
-
-
-// router.get('/user', jwtAuth, (req, res, next) => {
-
-//   return Question.find( { $or: [ {"userId": req.user._id} ] } )
-  
-//     .then(questions => res.json(questions.map(ques => ques.serialize())))
-//     .catch(err => res.status(500).json({message: 'Internal server error'}));
-// }) 
 
 
 module.exports = {router};
