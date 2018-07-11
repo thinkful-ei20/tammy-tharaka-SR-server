@@ -3,6 +3,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 
 const User = require('./models');
+const Question = require('../questions/models');
 
 const router = express.Router();
 
@@ -89,6 +90,8 @@ router.post('/', jsonParser, (req, res) => {
   firstName = firstName.trim();
   lastName = lastName.trim();
 
+  let user_id;
+
   return User.find({username})
     .count()
     .then(count => {
@@ -110,7 +113,32 @@ router.post('/', jsonParser, (req, res) => {
         lastName
       });
     })
+    //hydrate the questions in user... 
+    .then (user => {
+      user_id = user.id;
+      //get user id so we know where to store it
+      return Question.find();
+      //get the ALL questions 
+    })
+    .then(questions => {
+      //hydrate questions with additional info
+      return questions.map((question, index) => ({
+        _id: question._id,
+        question: question.img,
+        answer: question.correctAnswer,
+        mValue: 1,
+        next: index === question.length - 1 ? null : index + 1
+      }));
+    })
+    .then(user_questions => {
+      //place the changed question list into the user
+      return User.findByIdAndUpdate(
+        {_id: user_id}, 
+        { 'head' : user_questions[0].img_ref, 'questions': user_questions},
+        { new: true });
+    })
     .then(user => {
+      console.log(user);
       return res.status(201).json(user.serialize());
     })
     .catch(err => {

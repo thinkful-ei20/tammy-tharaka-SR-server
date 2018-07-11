@@ -84,61 +84,36 @@ router.put('/', jsonParser, (req,res,next) =>{
   let userAnswer = req.body.correctAnswer;
 
   //defined outside to be comparable
-  let topCard;
   let head;
-
   User.findOne({_id: userId})
     .then(results => {
+      console.log('this is user obj', results.questions);
       //finds index of where first card is
       //console.log(results.head);
+      head = results.head;
       return results.head;
     })
-    .then(() => {
-      //finds the card at the index
-      Question.findOne()
+    .then((head) => {
+      //finds the card at the head index
+      Question.findOne(head)
         .then(results => {
           console.log(results);
           return results.correctAnswer;  
         })
         .then((answer) => {
           if (userAnswer === answer){
-            console.log('this is user input', userAnswer);
+            //console.log('this is user input', userAnswer);
+            User.head = 
             res.json({message:'correct'});
           } else {
-            console.log('this is user input', userAnswer);
+            //console.log('this is user input', userAnswer);
             res.json({message:'incorrect'});
           }
         })
-
-
         .catch(err =>{
           next(err);
         });
     });
-
-
-
-
-  // if (userAnswer === topCard) {
-  //   User.
-  // };
-  // const userId = (req.user.id);
-  // const {correctAnswer} = req.body;
-  // let answer;
-  // let currentCard;
-  // //User.findOne
-  // //Pick out question at head
-  // Question.find({userId})
-  //   .then(results => {
-  //     //give only the top card
-  //     answer = results[0].correctAnswer;
-  //     currentCard = results[0]._id;
-  //   });
-  // if (correctAnswer === answer){
-  //   //set head
-  //   //head default at 0, if correct head is at 1
-  // }
-
 
 });
 //Utilize array indexes
