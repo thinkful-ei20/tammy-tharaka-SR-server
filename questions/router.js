@@ -47,25 +47,19 @@ router.post('/', jsonParser, (req, res, next) => {
 router.get('/', jsonParser, (req, res, next) => {
   const userId = (req.user._id);
   //console.log(userId);
-  let head;
+
   User.findOne({_id: userId})
     .then(results => {
       //finds index of where first card is
-      //console.log(results.head);
-      head = results.head;
+      console.log(results);
+      console.log(results.head);
+      res.json(results.head);
     })
-    .then(() => {
-      //finds the card at the index
-      Question.find()
-        .then(results => {
-          console.log(results);
-          res.json(results[head].img);
-        })
-        .then()
-        .catch(err =>{
-          next(err);
-        });
+    .then()
+    .catch(err =>{
+      next(err);
     });
+
 
 });
 
