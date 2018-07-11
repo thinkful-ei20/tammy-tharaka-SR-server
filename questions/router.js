@@ -108,20 +108,22 @@ router.get('/next', jsonParser, (req, res, next) => {
 router.put('/', jsonParser, (req,res,next) =>{
   const userId = (req.user._id);
   let userAnswer = req.body.correctAnswer;
+  let correctAnswer;
   let message;
 
   User.findOne({_id: userId})
     .then(user => {
       const currentIndex = user.head;
       const answeredQuestion = user.questions[currentIndex];
-
+      correctAnswer = answeredQuestion.answer;
+      console.log('this is the correct answer', correctAnswer);
 
       //EXAMPLE:  
       //answeredQuestion =
       // [{key: A, next:1, mValue: 1, next: 1}, 
 
       //compare if user input === whats stored in db
-      if (userAnswer === answeredQuestion.correctAnswer) {
+      if (userAnswer === correctAnswer) {
         //mValue higher if correct (further down in array)
         user.questions[currentIndex].mValue  = user.questions[currentIndex].mValue * 3;
         message = 'correct';
@@ -147,14 +149,17 @@ router.put('/', jsonParser, (req,res,next) =>{
       let currentQuestion = user.questions[newIndex];
       console.log('moving to node', currentQuestion);
 
+      let answeredQuestionIndex = answeredQuestion.next;
       answeredQuestion.next = currentQuestion.next;
-      currentQuestion.next = currentIndex;
+      currentQuestion.next = answeredQuestionIndex;
 
       return user.save();
     })
-    .then(user => {
+    .then(() => {
+      console.log(message);
+      console.log(correctAnswer);
       //should return answer, and correct or incorrect
-      res.json(user.questions);
+      res.json({correctAnswer, message});
     })
     .then()
     .catch(err =>{
