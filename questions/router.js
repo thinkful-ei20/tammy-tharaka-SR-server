@@ -84,7 +84,6 @@ router.put('/', jsonParser, (req,res,next) =>{
   let userAnswer = req.body.correctAnswer;
 
   //defined outside to be comparable
-
   let topCard;
   let head;
 
@@ -92,20 +91,33 @@ router.put('/', jsonParser, (req,res,next) =>{
     .then(results => {
       //finds index of where first card is
       //console.log(results.head);
-      head = results.head;
+      return results.head;
     })
     .then(() => {
       //finds the card at the index
-      Question.find()
+      Question.findOne()
         .then(results => {
-          //console.log(results);
-          topCard = results[head].answer;
+          console.log(results);
+          return results.correctAnswer;  
         })
-        .then()
+        .then((answer) => {
+          if (userAnswer === answer){
+            console.log('this is user input', userAnswer);
+            res.json({message:'correct'});
+          } else {
+            console.log('this is user input', userAnswer);
+            res.json({message:'correct'});
+          }
+        })
+
+
         .catch(err =>{
           next(err);
         });
     });
+
+
+
 
   // if (userAnswer === topCard) {
   //   User.

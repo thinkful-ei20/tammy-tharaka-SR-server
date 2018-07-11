@@ -8,7 +8,6 @@ const QuestionSchema = mongoose.Schema({
 
   img: { 
     type: String,
-    required: true
   },
   correctAnswer: {
     type: String,
