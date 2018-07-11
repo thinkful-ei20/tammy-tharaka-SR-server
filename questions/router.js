@@ -66,15 +66,19 @@ router.get('/next', jsonParser, (req, res, next) => {
   User.findOne({_id: userId})
     .then(user => {
       let currentIndex = user.head;
-
       let currentNode = user.questions[currentIndex];
-      let nextIndex = currentNode.next;      
+      let nextIndex; 
+      if (currentNode.next >= user.questions.length-1) {
+        nextIndex = 0;
+      } else {
+        nextIndex = currentNode.next;
+      }
+      console.log('next index is', nextIndex);
       user.head = nextIndex;
-
       return user.save();
     })
     .then(user => {
-      const head = user.head;
+      let head = user.head;
       res.json(user.questions[head].question);
     })
     .then()
@@ -127,7 +131,7 @@ router.put('/', jsonParser, (req,res,next) =>{
         // {key: A, next:1, mValue: 3 }, 
       } else {
         //mValue shifts only one
-        user.questions[currentIndex].mValue  = user.questions[currentIndex].mValue;
+        user.questions[currentIndex].mValue  = 1;
         message = 'incorrect';
         console.log('updated mValue', user.questions[currentIndex].mValue);
 
@@ -135,7 +139,7 @@ router.put('/', jsonParser, (req,res,next) =>{
         // [{key: A, next:1, mValue: 2},
       }
 
-      //user.head = answeredQuestion.next;
+      user.head = answeredQuestion.next;
 
       console.log('answeredQuestion', answeredQuestion);
       const newIndex = currentIndex + answeredQuestion.mValue;
@@ -149,6 +153,7 @@ router.put('/', jsonParser, (req,res,next) =>{
       return user.save();
     })
     .then(user => {
+      //should return answer, and correct or incorrect
       res.json(user.questions);
     })
     .then()
