@@ -106,7 +106,7 @@ router.put('/', jsonParser, (req,res,next) =>{
             res.json({message:'correct'});
           } else {
             console.log('this is user input', userAnswer);
-            res.json({message:'correct'});
+            res.json({message:'incorrect'});
           }
         })
 
