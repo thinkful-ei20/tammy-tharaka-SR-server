@@ -77,13 +77,17 @@ router.get('/next', jsonParser, (req, res, next) => {
       let currentIndex = user.head;
       let currentNode = user.questions[currentIndex];
       let nextIndex; 
-
+      console.log('current head', user.head);
+      console.log('next',currentNode.next);
       if (currentNode.next >= user.questions.length) {
-        nextIndex = 0;
+        nextIndex = currentIndex;
         //if end of stack reached, return to the first index of array...
       } else {
         nextIndex = currentNode.next;
       }
+     
+
+      console.log(user.questions.length-1);
       console.log('next index is', nextIndex);
 
       user.head = nextIndex;
@@ -124,6 +128,7 @@ router.put('/', jsonParser, (req,res,next) =>{
   let userAnswer = req.body.correctAnswer;
   let correctAnswer;
   let message;
+  let completedMessage;
 
   if (!userAnswer) {
     const err = new Error('Missing `correctAnswer` in request body');
@@ -163,8 +168,15 @@ router.put('/', jsonParser, (req,res,next) =>{
         currentNode = user.questions[currentNode.next];
         count--;
       }
-      //set het to next in decl
-      user.head = answeredQuestion.next;
+      //set head to next in deck
+      if (answeredQuestion.next >= user.questions.length) {
+        //if end of stack reached, send completed msg...
+        //future note: create new cards at the end
+        user.head = currentIndex;
+        completedMessage = 'You got woke';
+      } else {
+        user.head = answeredQuestion.next;
+      }
       //swap values answeredquestion.next with the node insertion point
       answeredQuestion.next=currentNode.next;
       currentNode.next = currentIndex;
@@ -175,7 +187,7 @@ router.put('/', jsonParser, (req,res,next) =>{
       console.log(message);
       console.log(correctAnswer);
       //should return answer, and correct or incorrect
-      res.json({correctAnswer, message});
+      res.json({correctAnswer,completedMessage, message});
     })
     .then()
     .catch(err =>{
