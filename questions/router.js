@@ -56,10 +56,10 @@ router.get('/', jsonParser, (req, res, next) => {
       return user.save();
     })
     .then(user => {
-      console.log(user.head);
-      res.json(user.questions[user.head].question);
+      //console.log(user.head);
+      let question = user.questions[user.head].question;
+      res.json(question);
     })
-     
     .then()
     .catch(err =>{
       next(err);
@@ -70,23 +70,28 @@ router.get('/', jsonParser, (req, res, next) => {
 router.get('/next', jsonParser, (req, res, next) => {
   const userId = (req.user._id);
   //console.log(userId);
+  
   User.findOne({_id: userId})
     .then(user => {
       let currentIndex = user.head;
       let currentNode = user.questions[currentIndex];
       let nextIndex; 
+
       if (currentNode.next >= user.questions.length) {
         nextIndex = 0;
+        //if end of stack reached, return to the first index of array...
       } else {
         nextIndex = currentNode.next;
       }
       console.log('next index is', nextIndex);
+
       user.head = nextIndex;
       return user.save();
     })
     .then(user => {
       let head = user.head;
-      res.json(user.questions[head].question);
+      let question = user.questions[head].question;
+      res.json(question);
     })
     .then()
     .catch(err =>{
@@ -94,7 +99,8 @@ router.get('/next', jsonParser, (req, res, next) => {
     });
 });
 
-//4 Check answer & make adjustments
+//4 PUT to answer question
+//  Check answer & make adjustments
 //      a. ANSWER CORRECT
 //          if the answer is correct (req === answer[0])
 //          mValue (memory value)
@@ -118,6 +124,12 @@ router.put('/', jsonParser, (req,res,next) =>{
   let correctAnswer;
   let message;
 
+  if (!correctAnswer) {
+    const err = new Error('Missing `correctAnswer` in request body');
+    err.status = 400;
+    return next(err);
+  }
+
   User.findOne({_id: userId})
     .then(user => {
       const currentIndex = user.head;
@@ -133,36 +145,41 @@ router.put('/', jsonParser, (req,res,next) =>{
       //compare if user input === whats stored in db
       if (userAnswer === correctAnswer) {
         //mValue higher if correct (further down in array)
-        user.questions[currentIndex].mValue  = user.questions[currentIndex].mValue * 3;
+        answeredQuestion.mValue  = answeredQuestion.mValue * 3;
         message = 'correct';
-        console.log('updated mValue', user.questions[currentIndex].mValue);
+        console.log('updated mValue', answeredQuestion.mValue);
 
         //EXAMPLE: 
         // {key: A, next:1, mValue: 3 }, 
       } else {
-        //mValue shifts only one
-        user.questions[currentIndex].mValue  = 1;
+        //if answer is incorrect, mValue reset to one
+        answeredQuestion.mValue = 1;
         message = 'incorrect';
-        console.log('updated mValue', user.questions[currentIndex].mValue);
+        console.log('updated mValue', answeredQuestion.mValue);
 
         //EXAMPLE: 
-        // [{key: A, next:1, mValue: 2},
+        // [{key: A, next:1, mValue: 1},
       }
 
       user.head = answeredQuestion.next;
 
       console.log('answeredQuestion', answeredQuestion);
+      //Find insertion point
+      //Original head index + the memory spaces(mValue) to move
       let newIndex = currentIndex + answeredQuestion.mValue;
+      //if the newIndex is beyond the array length reset to zero?
       if (newIndex >= user.questions.length){
         newIndex = 0;
       }
       console.log('newIndex', newIndex);
+
+      //
       const currentQuestion = user.questions[newIndex];
       console.log('moving to node', currentQuestion);
 
-      const answeredQuestionIndex = answeredQuestion.next;
+      //const answeredQuestionIndex = answeredQuestion.next;
       answeredQuestion.next = currentQuestion.next;
-      currentQuestion.next = answeredQuestionIndex;
+      currentQuestion.next = currentIndex;
 
       return user.save();
     })
@@ -178,11 +195,6 @@ router.put('/', jsonParser, (req,res,next) =>{
     });
 });
       
-
-
-
-
-
 
 // [{key: A, next:1}, {key: B, next:2}, {key: C, next:3}, {key: D, next:4}, {key: E, next:5}];
 //change the next pointer 
