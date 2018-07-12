@@ -28,7 +28,7 @@ describe('/api/user', function () {
     return User.remove({});
   });
 
-  describe.only('api/users', function () {
+  describe('api/users', function () {
     describe('POST', function () {
       it('Should reject user with missing username', function (){
         return chai 
