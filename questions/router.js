@@ -50,9 +50,16 @@ router.get('/', jsonParser, (req, res, next) => {
   //console.log(userId);
   User.findOne({_id: userId})
     .then(user => {
+      if (user.head >= user.questions.length){
+        user.head = 0;
+      }
+      return user.save();
+    })
+    .then(user => {
       console.log(user.head);
       res.json(user.questions[user.head].question);
     })
+     
     .then()
     .catch(err =>{
       next(err);
@@ -68,7 +75,7 @@ router.get('/next', jsonParser, (req, res, next) => {
       let currentIndex = user.head;
       let currentNode = user.questions[currentIndex];
       let nextIndex; 
-      if (currentNode.next >= user.questions.length-1) {
+      if (currentNode.next >= user.questions.length) {
         nextIndex = 0;
       } else {
         nextIndex = currentNode.next;
@@ -114,6 +121,7 @@ router.put('/', jsonParser, (req,res,next) =>{
   User.findOne({_id: userId})
     .then(user => {
       const currentIndex = user.head;
+      console.log(user.head);
       const answeredQuestion = user.questions[currentIndex];
       correctAnswer = answeredQuestion.answer;
       console.log('this is the correct answer', correctAnswer);
@@ -144,12 +152,15 @@ router.put('/', jsonParser, (req,res,next) =>{
       user.head = answeredQuestion.next;
 
       console.log('answeredQuestion', answeredQuestion);
-      const newIndex = currentIndex + answeredQuestion.mValue;
+      let newIndex = currentIndex + answeredQuestion.mValue;
+      if (newIndex >= user.questions.length){
+        newIndex = 0;
+      }
       console.log('newIndex', newIndex);
-      let currentQuestion = user.questions[newIndex];
+      const currentQuestion = user.questions[newIndex];
       console.log('moving to node', currentQuestion);
 
-      let answeredQuestionIndex = answeredQuestion.next;
+      const answeredQuestionIndex = answeredQuestion.next;
       answeredQuestion.next = currentQuestion.next;
       currentQuestion.next = answeredQuestionIndex;
 
