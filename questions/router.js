@@ -73,26 +73,26 @@ router.get('/next', jsonParser, (req, res, next) => {
   //console.log(userId);
   
   User.findOne({_id: userId})
-    .then(user => {
-      let currentIndex = user.head;
-      let currentNode = user.questions[currentIndex];
-      let nextIndex; 
-      console.log('current head', user.head);
-      console.log('next',currentNode.next);
-      if (currentNode.next >= user.questions.length) {
-        nextIndex = currentIndex;
-        //if end of stack reached, return to the first index of array...
-      } else {
-        nextIndex = currentNode.next;
-      }
+    // .then(user => {
+    //   let currentIndex = user.head;
+    //   let currentNode = user.questions[currentIndex];
+    //   let nextIndex; 
+    //   console.log('current head', user.head);
+    //   console.log('next',currentNode.next);
+    //   if (currentNode.next >= user.questions.length) {
+    //     nextIndex = currentIndex;
+    //     //if end of stack reached, return to the first index of array...
+    //   } else {
+    //     nextIndex = currentNode.next;
+    //   }
      
 
-      console.log(user.questions.length-1);
-      console.log('next index is', nextIndex);
+    //   console.log(user.questions.length-1);
+    //   console.log('next index is', nextIndex);
 
-      user.head = nextIndex;
-      return user.save();
-    })
+    //   user.head = nextIndex;
+    //   return user.save();
+    // })
     .then(user => {
       let head = user.head;
       let question = user.questions[head].question;
