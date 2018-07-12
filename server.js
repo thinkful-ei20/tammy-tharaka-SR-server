@@ -18,8 +18,7 @@ const app = express();
 
 app.use(
   cors({
-    // origin: CLIENT_ORIGIN
-    origin: 'http://localhost:3000'
+    origin: CLIENT_ORIGIN
   })
 );
 
