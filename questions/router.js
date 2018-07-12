@@ -57,6 +57,7 @@ router.get('/', jsonParser, (req, res, next) => {
     })
     .then(user => {
       //console.log(user.head);
+      console.log(user.questions);
       let question = user.questions[user.head].question;
       res.json(question);
     })
@@ -124,7 +125,7 @@ router.put('/', jsonParser, (req,res,next) =>{
   let correctAnswer;
   let message;
 
-  if (!correctAnswer) {
+  if (!userAnswer) {
     const err = new Error('Missing `correctAnswer` in request body');
     err.status = 400;
     return next(err);
@@ -177,9 +178,9 @@ router.put('/', jsonParser, (req,res,next) =>{
       const currentQuestion = user.questions[newIndex];
       console.log('moving to node', currentQuestion);
 
-      //const answeredQuestionIndex = answeredQuestion.next;
+      const answeredQuestionIndex = answeredQuestion.next;
       answeredQuestion.next = currentQuestion.next;
-      currentQuestion.next = currentIndex;
+      currentQuestion.next = answeredQuestionIndex;
 
       return user.save();
     })
