@@ -150,6 +150,7 @@ router.put('/', jsonParser, (req,res,next) =>{
         answeredQuestion.mValue  = answeredQuestion.mValue * 3;
         message = 'correct';
         console.log('updated mValue', answeredQuestion.mValue);
+        console.log(answeredQuestion);
 
       } else {
         //if answer is incorrect, mValue reset to one
@@ -162,29 +163,34 @@ router.put('/', jsonParser, (req,res,next) =>{
       //determine how many nodes to shift, and where to begin
       let count = answeredQuestion.mValue;
       let currentNode = user.questions[currentIndex];
-
-      //locate node
-      while(count && currentNode.next <= user.questions.length){
-        currentNode = user.questions[currentNode.next];
-        count--;
-      }
       //set head to next in deck
-      if (answeredQuestion.next >= user.questions.length) {
+      if (answeredQuestion.next >= user.questions.length -1) {
         //if end of stack reached, send completed msg...
         //future note: create new cards at the end
-        user.head = currentIndex;
         completedMessage = 'You got woke';
+        user.head = currentIndex;
+        answeredQuestion.next = currentIndex;
+        currentNode.next = currentIndex;
+
       } else {
+        //locate node
+        while(count && currentNode.next <= user.questions.length){
+          currentNode = user.questions[currentNode.next];
+          count--;
+        }
         user.head = answeredQuestion.next;
+        answeredQuestion.next=currentNode.next;
+        currentNode.next = currentIndex;
       }
       //swap values answeredquestion.next with the node insertion point
-      answeredQuestion.next=currentNode.next;
-      currentNode.next = currentIndex;
-
+      // answeredQuestion.next=currentNode.next;
+      // currentNode.next = currentIndex;
+     
       return user.save();
     })
     .then(() => {
       console.log(message);
+      console.log(completedMessage);
       console.log(correctAnswer);
       //should return answer, and correct or incorrect
       res.json({correctAnswer,completedMessage, message});
