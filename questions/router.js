@@ -139,48 +139,35 @@ router.put('/', jsonParser, (req,res,next) =>{
       correctAnswer = answeredQuestion.answer;
       console.log('this is the correct answer', correctAnswer);
 
-      //EXAMPLE:  
-      //answeredQuestion =
-      // [{key: A, next:1, mValue: 1, next: 1}, 
-
-      //compare if user input === whats stored in db
+    
       if (userAnswer === correctAnswer) {
         //mValue higher if correct (further down in array)
         answeredQuestion.mValue  = answeredQuestion.mValue * 3;
         message = 'correct';
         console.log('updated mValue', answeredQuestion.mValue);
 
-        //EXAMPLE: 
-        // {key: A, next:1, mValue: 3 }, 
       } else {
         //if answer is incorrect, mValue reset to one
         answeredQuestion.mValue = 1;
         message = 'incorrect';
         console.log('updated mValue', answeredQuestion.mValue);
 
-        //EXAMPLE: 
-        // [{key: A, next:1, mValue: 1},
       }
 
+      //determine how many nodes to shift, and where to begin
+      let count = answeredQuestion.mValue;
+      let currentNode = user.questions[currentIndex];
+
+      //locate node
+      while(count && currentNode.next <= user.questions.length){
+        currentNode = user.questions[currentNode.next];
+        count--;
+      }
+      //set het to next in decl
       user.head = answeredQuestion.next;
-
-      console.log('answeredQuestion', answeredQuestion);
-      //Find insertion point
-      //Original head index + the memory spaces(mValue) to move
-      let newIndex = currentIndex + answeredQuestion.mValue;
-      //if the newIndex is beyond the array length reset to zero?
-      if (newIndex >= user.questions.length){
-        newIndex = 0;
-      }
-      console.log('newIndex', newIndex);
-
-      //
-      const currentQuestion = user.questions[newIndex];
-      console.log('moving to node', currentQuestion);
-
-      const answeredQuestionIndex = answeredQuestion.next;
-      answeredQuestion.next = currentQuestion.next;
-      currentQuestion.next = answeredQuestionIndex;
+      //swap values answeredquestion.next with the node insertion point
+      answeredQuestion.next=currentNode.next;
+      currentNode.next = currentIndex;
 
       return user.save();
     })
