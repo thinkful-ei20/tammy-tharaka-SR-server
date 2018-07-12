@@ -164,7 +164,7 @@ router.put('/', jsonParser, (req,res,next) =>{
       let count = answeredQuestion.mValue;
       let currentNode = user.questions[currentIndex];
       //set head to next in deck
-      if (answeredQuestion.next >= user.questions.length -1) {
+      if (answeredQuestion.next >= user.questions.length) {
         //if end of stack reached, send completed msg...
         //future note: create new cards at the end
         completedMessage = 'You got woke';
