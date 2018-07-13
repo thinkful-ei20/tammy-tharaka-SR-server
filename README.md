@@ -1,45 +1,53 @@
-# Thinkful Backend Template
+# Cards to Get Woke.
+Revisit America's unsung heros through a deck of cards.
 
-A template for developing and deploying Node.js apps.
+This is stuff you won't find in history books, the forgotten struggles and unifiying strength brought to America by minorities, immigrants, and their supporters. 
 
-## Getting started
+Get woke.
 
-### Setting up a project
+This app uses an alorithm to emulate [spaced repetition](https://www.theguardian.com/education/2016/jan/23/spaced-repetition-a-hack-to-make-your-brain-store-information). 
 
-* Move into your projects directory: `cd ~/YOUR_PROJECTS_DIRECTORY`
-* Clone this repository: `git clone https://github.com/Thinkful-Ed/backend-template YOUR_PROJECT_NAME`
-* Move into the project directory: `cd YOUR_PROJECT_NAME`
-* Install the dependencies: `npm install`
-* Create a new repo on GitHub: https://github.com/new
-    * Make sure the "Initialize this repository with a README" option is left unchecked
-* Update the remote to point to your GitHub repository: `git remote set-url origin https://github.com/YOUR_GITHUB_USERNAME/YOUR_REPOSITORY_NAME`
+This deck of cards cycles through images of a individuals who shaped American discourse on civil rights within the States and abroad. 
 
-### Working on the project
+The purpose is to highlight how outsiders continuously shaped American ideals and how these ideas influence the world. 
 
-* Move into the project directory: `cd ~/YOUR_PROJECTS_DIRECTORY/YOUR_PROJECT_NAME`
-* Run the development task: `npm start`
-    * Starts a server running at http://localhost:8080
-    * Automatically restarts when any of your files change
 
-## Databases
+# Features
+- Users can create an account
+-U sers can store where they last ended their study session
+- Users can have a customized order of cards based on how well they answer questions
 
-By default, the template is configured to connect to a MongoDB database using Mongoose.  It can be changed to connect to a PostgreSQL database using Knex by replacing any imports of `db-mongoose.js` with imports of `db-knex.js`, and uncommenting the Postgres `DATABASE_URL` lines in `config.js`.
 
-## Deployment
+## To Come
+- Users can keep score of their progress
+- Users can post new cards to the deck
 
-Requires the [Heroku CLI client](https://devcenter.heroku.com/articles/heroku-command-line).
 
-### Setting up the project on Heroku
+# How to Use
 
-* Move into the project directory: `cd ~/YOUR_PROJECTS_DIRECTORY/YOUR_PROJECT_NAME`
-* Create the Heroku app: `heroku create PROJECT_NAME`
+## Code Style
+Standard/Thinkful-style
+[![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat)](https://github.com/feross/standard)
 
-* If your backend connects to a database, you need to configure the database URL:
-    * For a MongoDB database: `heroku config:set DATABASE_URL=mongodb://USERNAME:PASSWORD@HOST:PORT/DATABASE_NAME`
-    * For a PostgreSQL database: `heroku config:set DATABASE_URL=postgresql://USERNAME:PASSWORD@HOST:PORT/DATABASE_NAME`
+## Tech/framework used
 
-* If you are creating a full-stack app, you need to configure the client origin: `heroku config:set CLIENT_ORIGIN=https://www.YOUR_DEPLOYED_CLIENT.com`
+<b>Built with</b>
+- [Express](https://expressjs.com/)
+- [React](https://reactjs.org/)/
+- [Mocha](https://mochajs.org/)
+- [Chai](http://www.chaijs.com/)
+- [Enzyme](https://airbnb.io/enzyme/docs/api/)
+- [Travis](https://travis-ci.org)
 
-### Deploying to Heroku
+## Server
+- Authentication(login):   auth/router.js
+- All the events handling: questions/router.js
+- All the user handling:   user/router.js
+- User model:              users/models.js
+- Question model:          questions/models.js
+- config file:             config.js
+- server file:             server.js
 
-* Push your code to Heroku: `git push heroku master`
+## Credits
+Thank you to the Thinkful team for their wonderful support. 
+
