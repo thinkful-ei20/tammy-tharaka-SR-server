@@ -28,6 +28,7 @@ router.post('/', jsonParser, (req, res, next) => {
   }
   if (!correctAnswer) {
     const err = new Error('Missing `correctAnswer` in request body');
+    err.message = jsonParser('Missing `correctAnswer` in request body')
     err.status = 400;
     return next(err);
   }
