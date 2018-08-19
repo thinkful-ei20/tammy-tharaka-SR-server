@@ -156,7 +156,7 @@ router.put('/', jsonParser, (req,res,next) =>{
       } else {
         //if answer is incorrect, mValue reset to one
         answeredQuestion.mValue = 1;
-        message = 'incorrect';
+        message = `incorrect, the correct answer is ${correctAnswer}`;
         console.log('updated mValue', answeredQuestion.mValue);
 
       }
